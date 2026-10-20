@@ -15,6 +15,8 @@ on:
       - 'gradle.properties'
       - '.github/workflows/compteur-simple.yml'
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -32,10 +34,12 @@ jobs:
         with:
           gradle-version: '8.9'
       - name: Compiler APK debug
+        id: compilation
         run: gradle :applications:compteur-simple:assembleDebug
       - name: Activer KVM
         run: sudo chmod 666 /dev/kvm
       - name: Tester sur émulateur
+        id: emulator_tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
@@ -54,3 +58,39 @@ jobs:
             applications/compteur-simple/build/reports/androidTests/**
             applications/compteur-simple/build/outputs/androidTest-results/**
           if-no-files-found: warn
+
+      - name: Enregistrer le dernier résultat consultable sans URL
+        if: always() && github.event_name != 'pull_request'
+        env:
+          COMPILE_RESULT: ${{ steps.compilation.outcome }}
+          TEST_RESULT: ${{ steps.emulator_tests.outcome }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          COMMIT_SHA: ${{ github.sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          mkdir -p suivi
+          python3 - <<'PY'
+          import json, os, datetime
+          data = {
+            "application": "compteur-simple",
+            "run_id": int(os.environ["RUN_ID"]),
+            "run_attempt": int(os.environ["RUN_ATTEMPT"]),
+            "run_url": f'https://github.com/{os.environ["REPOSITORY"]}/actions/runs/{os.environ["RUN_ID"]}',
+            "source_commit": os.environ["COMMIT_SHA"],
+            "compilation": os.environ["COMPILE_RESULT"],
+            "tests_emulateur": os.environ["TEST_RESULT"],
+            "archive": "compteur-simple-resultats",
+            "date_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()
+          }
+          with open("suivi/compteur-simple-dernier-run.json", "w", encoding="utf-8") as out:
+              json.dump(data, out, ensure_ascii=False, indent=2)
+              out.write("\\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add suivi/compteur-simple-dernier-run.json
+          if ! git diff --cached --quiet; then
+            git commit -m "suivi: résultat automatique du compteur [skip ci]"
+            git push origin HEAD:main
+          fi
