@@ -36,7 +36,13 @@ Chaque application aura son propre dossier, par exemple `applications/gestionnai
 
 ## État du laboratoire
 
-**Structure initiale créée.** Aucun projet Android ni émulateur n'est encore installé ou validé. Les workflows de compilation et de test seront ajoutés lors de la création de la première application.
+**Premier projet créé :** [Calculatrice Test](applications/calculatrice-test/README.md). Son code Android, ses tests instrumentés et un workflow GitHub Actions de compilation et d'émulation sont présents. La réussite effective du workflow reste à vérifier dans GitHub Actions.
+
+## Premier essai : calculatrice Android
+
+- [Voir le sous-projet Calculatrice Test](applications/calculatrice-test/README.md)
+- [Voir le workflow de compilation et tests Android](.github/workflows/calculatrice-test.yml)
+- [Voir les exécutions GitHub Actions](../../actions)
 
 ## Ajouter une application
 
