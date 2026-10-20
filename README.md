@@ -123,3 +123,32 @@ Déclencheur : « Lis le README de mon dossier Google Drive développement_appli
 **Règle de séparation des rôles** : l'exécutant ne s'auto-valide pas ; le manager est responsable de l'acceptation et de l'assemblage ; l'orchestrateur arbitre les conflits entre managers. Les preuves de décompilation, les tests unitaires et les essais sur émulateur constituent des contrôles différents, qui doivent être suivis séparément.
 
 **Traçabilité** : conserver par application les contrats, rapports de refus/correction, versions validées, dépendances et résultats de tests dans `applications/<slug>/analyse/` ; publier un état synthétique dans `suivi/`. Le fonctionnement effectif en agents autonomes exige un moteur d'orchestration à déployer ; cette description seule ne crée pas ces agents.
+
+
+## Règle générale impérative : analyse validée avant création (transférable à ChatGPT Work)
+
+Ce protocole s'applique **à toute application Android** et à tout nouveau sous-projet du monorepo. Les expériences ponctuelles ne définissent ni son nom ni sa version. Ne jamais présupposer le nom `V2` ou créer un sous-projet avant l'autorisation formelle.
+
+### Phases et portes de décision
+
+**Phase A — acquisition et inventaire** : recevoir l'APK/XAPK/APKS ; enregistrer empreintes, splits, ABI, SDK, composants, bibliothèques, ressources et provenance. Aucune génération de code applicatif.
+
+**Phase B — rétro-analyse exhaustive** : les spécialistes DEX/Smali, code natif/assembleur, Flutter/AOT, ressources, persistance, réseau et événements reconstruisent les modules, points d'entrée, fonctions, procédures, callbacks, données, états et appels. Pour chaque unité, consigner identifiant stable, preuve (fichier/symbole/adresse), appelants, appelés, entrées, sorties, effets secondaires, conditions, erreurs, dépendances et niveau de confiance. Reconstituer les graphes d'appels, de flux de données, d'états et de navigation, notamment l'initialisation et les boucles événementielles. Ne pas substituer les descriptions commerciales à l'analyse du code.
+
+**Phase C — vérification contradictoire** : chaque agent livre des preuves ; un manager indépendant vérifie couverture, cohérence, cas limites et interfaces. En cas d'insuffisance, il refuse la brique avec anomalie reproductible et renvoie à l'exécutant. Les boucles continuent jusqu'à validation ou blocage explicitement documenté ; escalade en cas de répétition. Une chaîne isolée ou un nom de fonction ne vaut pas preuve de son fonctionnement.
+
+**Phase D — spécification intégrale** : produire l'arborescence de toutes les fonctions, les matrices des écrans/actions, des données/tableaux, des entrées/sorties, les graphes, les preuves et la liste des inconnues. Dresser aussi l'inventaire des exigences techniques **découvertes pendant l'analyse** : architecture CPU, bibliothèques, services, SDK, permissions, capacités GitHub Actions, émulateur ou matériel requis. Ne pas figer le futur environnement de construction avant cet inventaire.
+
+**PORTE BLOQUANTE — autorisation de création** : l'orchestrateur n'autorise la phase E que si le manager a validé l'intégralité de l'analyse et ses critères de couverture, sans zone fonctionnelle non résolue. Si une partie reste incertaine ou inaccessible, déclarer `ANALYSE NON VALIDÉE / BLOQUÉE` et **ne pas créer de code, de module Android ni de workflow de build pour cette application**. Ne pas inventer un taux de couverture de 100 %. Toute impossibilité technique doit être remontée à l'utilisateur.
+
+**Phase E — création du sous-projet** : seulement après autorisation, créer un module isolé dans le dépôt GitHub commun, choisir les outils/SDK/ABI/dépendances en fonction des résultats d'analyse, implémenter indépendamment et écrire les tests correspondant aux comportements prouvés.
+
+**Phase F — tests et boucles de correction** : compiler, exécuter les tests adaptés, comparer les résultats aux spécifications validées, faire rejeter/corriger les briques par les managers, puis assembler et exécuter les tests d'intégration. Conserver la traçabilité des anomalies et validations.
+
+**Phase G — livraison** : fournir artefacts, résultats de tests, écarts, preuves et état final, sans déclarer une équivalence non vérifiée.
+
+### Organisation transférable à ChatGPT Work
+
+Work est le **pilote** du processus, non un substitut à l'analyse technique : orchestrateur général, managers de spécialité, agents exécutants et vérificateurs. GitHub est le monorepo et l'outil de CI ; Drive sert de boîte d'entrée et de conservation des originaux/rapports. Le fonctionnement parallèle, les agents réellement disponibles et les outils de décompilation doivent être vérifiés avant de prétendre qu'ils sont déployés.
+
+**Consigne de démarrage universelle** : « Lis le protocole générique, analyse intégralement le binaire Android déposé, fais vérifier toutes les briques et livre le dossier de rétro-analyse. Ne crée aucun sous-projet ni code tant que la porte de validation de l'analyse n'est pas franchie. »
