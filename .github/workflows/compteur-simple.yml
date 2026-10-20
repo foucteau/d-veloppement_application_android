@@ -85,7 +85,7 @@ jobs:
           }
           with open("suivi/compteur-simple-dernier-run.json", "w", encoding="utf-8") as out:
               json.dump(data, out, ensure_ascii=False, indent=2)
-              out.write("\\n")
+              out.write(chr(10))
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
