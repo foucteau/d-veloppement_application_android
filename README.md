@@ -192,3 +192,18 @@ développement_application_android/
 Cette arborescence est **une cible documentaire** : ne pas déclarer créés les fichiers ou sous-dossiers qui n'existent pas encore. Le dossier `original/` est recommandé ; si l'archive a été déplacée directement à la racine du sous-dossier, elle reste valide et son emplacement doit être enregistré dans le README.
 
 **Politique de reprise** : chaque étape produit un état durable, horodaté, avec liens de preuves, responsable, version et prochaine action. Une interruption ne doit jamais faire perdre le dernier état validé. Les artefacts volumineux peuvent être conservés dans un stockage associé, mais doivent être indexés depuis la mémoire centrale Drive.
+
+
+## Démarrage opérationnel et attribution des rôles
+
+Pour chaque nouvelle prise en charge, l’orchestrateur vérifie d’abord l’accès effectif à Drive et au dépôt, lit ce README, liste la boîte de dépôt Drive et contrôle les outils de l’environnement courant. Seuls les APK, XAPK ou APKS non classés présents à la racine sont de nouvelles entrées ; les originaux déjà rangés dans un dossier d’application ne sont pas repris comme demandes.
+
+Avant toute décompilation, l’orchestrateur identifie le paquet et la version à partir du binaire, recherche le dossier d’application existant, classe l’original sans le renommer ni le remplacer, puis vérifie son ID, son parent, sa taille et son SHA-256. Il initialise ou relit le README, l’état et le journal de la mémoire centrale. Une provenance non établie reste indiquée comme inconnue.
+
+Après l’inventaire réel des technologies, l’orchestrateur établit une matrice de travail adaptée : manager et spécialiste DEX/Java/Kotlin/Smali ; manager et spécialiste natif/ARM/JNI ; spécialiste Flutter/Dart AOT si détecté ; manager ressources/interface/navigation ; managers données/persistance, réseau et sécurité lorsque ces domaines existent. Chaque brique est contrôlée par une personne, un agent ou une passe de vérification distincte de son exécutant. Une spécialité non détectée ou inaccessible est marquée non applicable ou bloquée, jamais supposée couverte.
+
+Chaque rapport de brique comporte au minimum : identifiant, responsable et rôle, fichiers et symboles examinés, preuve exacte, préconditions, entrées, sorties, effets, appels entrants et sortants, branches et erreurs, dépendances, niveau de confiance, inconnues et procédure de contre-vérification. Le manager consigne son acceptation ou un rejet avec anomalie reproductible ; l’exécutant ne valide pas son propre rapport.
+
+La disponibilité des agents, des outils, des émulateurs et des appareils est vérifiée pour la session en cours. Une description de rôles dans ce README n’implique ni leur déploiement permanent ni leur exécution parallèle. Le compte rendu mentionne les outils réellement testés, les outils absents et leurs conséquences sur la couverture.
+
+La porte de création reste fermée tant que l’inventaire, l’analyse, les contre-vérifications et la spécification ne sont pas validés. Les inconnues fonctionnelles ou techniques entraînent le statut « ANALYSE NON VALIDÉE / BLOQUÉE ». Une fois l’analyse entièrement validée, présenter à l’utilisateur le dossier et obtenir son autorisation explicite avant de créer le sous-projet Android.
