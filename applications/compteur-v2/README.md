@@ -1,14 +1,21 @@
-# Compteur V2 — refonte fondée sur le XAPK original
+# Compteur V2 — phase d'analyse exclusive
 
-**Nouveau projet indépendant**, sans réutilisation du code du compteur V1. Référence : `com.kdevelop.simplecounter-36_arm64-v8a.xapk`, version 1.1.22 (36), SHA-256 `53574ba3229e149647326a3a6ee88fd22048f339035c323129c40b910bb49f17`.
+**STATUT : ANALYSE INCOMPLÈTE — DÉVELOPPEMENT INTERDIT.**
 
-## Sources et méthode
-1. Inspection de l'archive XAPK et des APK scindés.
-2. Extraction de `lib/arm64-v8a/libapp.so` (Flutter Dart AOT), `libflutter.so`, `libdatastore_shared_counter.so`, `classes.dex` et ressources.
-3. Extraction de chaînes et de noms de classes/méthodes du binaire AOT ; ces symboles prouvent une présence dans l'image compilée, **pas le comportement exact**.
-4. Analyse ultérieure requise : DEX/Smali, désassemblage ARM64, graphes d'appels, lecture structurée des ressources et exécution de la référence sur ARM64.
-5. Aucune description commerciale ne constitue une preuve fonctionnelle primaire.
+L'utilisateur impose une barrière de validation : ne créer aucune refonte avant la cartographie exhaustive du fonctionnement de l'application originale à partir du code de l'APK/XAPK. Les descriptions Play Store ne sont pas des preuves primaires.
 
-**État** : analyse statique initiale vérifiée ; spécification détaillée ci-dessous ; implémentation V2 à construire et tester. Les fonctionnalités marquées « à confirmer » ne sont pas garanties.
+Les fichiers de prototype V2 précédemment créés sont **obsolètes, non validés et ne doivent être ni compilés ni développés davantage**. Leur présence historique dans le dépôt ne constitue pas une autorisation de développement.
 
-Voir [cahier des charges](analyse/CAHIER_DES_CHARGES.md) et [inventaire des preuves](analyse/PREUVES.md).
+## Livrables d'analyse obligatoires
+1. Inventaire complet des APK/splits, DEX, ressources, ELF, bibliothèques et points d'entrée.
+2. Arborescence des modules, classes, fonctions, procédures, callbacks et événements.
+3. Pour chaque routine : adresse/symbole et preuve, entrées et types, sorties, effets secondaires, dépendances, appelants, appelés, conditions, erreurs et niveau de confiance.
+4. Graphes d'appels et de flux de données reliant initialisation, boucle d'événements Flutter, gestion d'état, interface, persistance et bibliothèques natives.
+5. Catalogue des écrans, widgets, actions, paramètres et tableaux, reliés aux routines et aux données du code.
+6. Rapports de contre-vérification entre analystes DEX, Flutter AOT, assembleur ARM64 et intégrateur fonctionnel.
+7. Liste explicite des zones indéchiffrées, de l'incertitude et des chemins non explorés.
+8. Validation finale du manager avec couverture justifiée et vérification des contradictions avant tout feu vert au développement.
+
+**Règle :** une chaîne trouvée dans `libapp.so` est un indice, pas une fonction démontrée. L'exhaustivité ne peut pas être affirmée sans preuves de couverture suffisantes. En cas de limite de désassemblage, marquer `BLOQUÉ` et ne pas déclencher le développement.
+
+Documents initiaux : [preuves](analyse/PREUVES.md), [cahier des charges provisoire](analyse/CAHIER_DES_CHARGES.md).
