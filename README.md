@@ -101,3 +101,25 @@ Déclencheur : « Lis le README de mon dossier Google Drive développement_appli
 7. Publier les rapports dans `applications/<slug>/analyse/` et un état synthétique dans `suivi/`. Les rôles peuvent être exécutés par des processus indépendants, des outils ou des passes successives ; ne pas prétendre qu'ils tournent en parallèle si ce n'est pas le cas.
 
 **Priorité des sources :** l'APK/XAPK réel et les observations de son exécution priment sur les descriptions commerciales. Les pages de présentation et avis sont seulement des sources secondaires de contexte. L'analyse ne doit pas servir à contourner des licences, paiements ou protections d'accès.
+
+
+### Contrôle hiérarchique, boucles de correction et assemblage
+
+**Règle de fonctionnement** : chaque agent exécutant soumet une *brique* à son agent manager. Le manager vérifie les preuves et les critères d'acceptation avant toute intégration. Une brique non validée ne doit jamais être présentée comme terminée.
+
+**Contrat de brique** : identifiant, responsable, dépendances, entrées, livrables, références exactes aux fichiers/fonctions/adresses analysés, hypothèses, niveau de confiance, tests reproductibles, résultats observés et limites. Pour le code produit : diff, commande de compilation, tests et résultat.
+
+**Cycle** :
+1. Le manager découpe l'objectif en tâches indépendantes et attribue chacune à un spécialiste.
+2. L'exécutant livre sa brique avec preuves et procédure de vérification.
+3. Le manager contrôle la cohérence, les cas limites et les interfaces avec les autres briques ; un agent vérificateur distinct exécute les tests lorsque possible.
+4. Si refus : le manager renvoie un rapport d'anomalie précis (résultat attendu, résultat observé, référence, priorité, critère de résolution). L'exécutant corrige et soumet une nouvelle version ; chaque itération est historisée.
+5. Après validation : la brique est figée avec sa version et son statut ; le manager l'assemble aux autres briques validées.
+6. Les tests d'intégration et de non-régression contrôlent l'ensemble. Un échec réouvre les briques concernées et déclenche une nouvelle boucle.
+7. Après plusieurs échecs sur la même anomalie, escalader vers un autre spécialiste ou l'orchestrateur ; ne pas tourner indéfiniment et ne jamais inventer une réussite.
+
+**États obligatoires** : `à analyser`, `en cours`, `à vérifier`, `rejeté`, `corrigé`, `validé`, `intégré`, `bloqué`. Un résultat seulement plausible reste `à vérifier`, pas `validé`.
+
+**Règle de séparation des rôles** : l'exécutant ne s'auto-valide pas ; le manager est responsable de l'acceptation et de l'assemblage ; l'orchestrateur arbitre les conflits entre managers. Les preuves de décompilation, les tests unitaires et les essais sur émulateur constituent des contrôles différents, qui doivent être suivis séparément.
+
+**Traçabilité** : conserver par application les contrats, rapports de refus/correction, versions validées, dépendances et résultats de tests dans `applications/<slug>/analyse/` ; publier un état synthétique dans `suivi/`. Le fonctionnement effectif en agents autonomes exige un moteur d'orchestration à déployer ; cette description seule ne crée pas ces agents.
