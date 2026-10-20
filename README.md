@@ -38,6 +38,12 @@ Chaque application aura son propre dossier, par exemple `applications/gestionnai
 
 **Premier projet créé :** [Calculatrice Test](applications/calculatrice-test/README.md). Son code Android, ses tests instrumentés et un workflow GitHub Actions de compilation et d'émulation sont présents. La réussite effective du workflow reste à vérifier dans GitHub Actions.
 
+## Projet pilote : compteur simple
+
+- [Compteur simple — application indépendante et tests](applications/compteur-simple/README.md)
+- [Workflow GitHub Actions du compteur](.github/workflows/compteur-simple.yml)
+- APK de référence XAPK déposé sur Google Drive ; rapport initial dans le sous-dossier `compteur-simple/`.
+
 ## Premier essai : calculatrice Android
 
 - [Voir le sous-projet Calculatrice Test](applications/calculatrice-test/README.md)
