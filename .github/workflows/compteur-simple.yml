@@ -1,0 +1,54 @@
+name: Compteur simple - Android build et tests
+on:
+  push:
+    paths:
+      - 'applications/compteur-simple/**'
+      - 'settings.gradle'
+      - 'build.gradle'
+      - 'gradle.properties'
+      - '.github/workflows/compteur-simple.yml'
+  pull_request:
+    paths:
+      - 'applications/compteur-simple/**'
+      - 'settings.gradle'
+      - 'build.gradle'
+      - 'gradle.properties'
+      - '.github/workflows/compteur-simple.yml'
+  workflow_dispatch:
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Compiler APK debug
+        run: gradle :applications:compteur-simple:assembleDebug
+      - name: Activer KVM
+        run: sudo chmod 666 /dev/kvm
+      - name: Tester sur émulateur
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: gradle :applications:compteur-simple:connectedDebugAndroidTest
+      - name: Archiver APK et rapports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compteur-simple-resultats
+          path: |
+            applications/compteur-simple/build/outputs/apk/debug/*.apk
+            applications/compteur-simple/build/reports/androidTests/**
+            applications/compteur-simple/build/outputs/androidTest-results/**
+          if-no-files-found: warn
