@@ -22,6 +22,12 @@ public class CounterUiTest {
         onView(withId(R.id.counter_value)).check(matches(withText("1")));
     }
 
+    @Test public void tapOnCountIncrements() {
+        tap("Remettre à zéro");
+        onView(withId(R.id.counter_value)).perform(click());
+        onView(withId(R.id.counter_value)).check(matches(withText("1")));
+    }
+
     @Test public void reset() {
         tap("Remettre à zéro"); tap("+1"); tap("Remettre à zéro");
         onView(withId(R.id.counter_value)).check(matches(withText("0")));
