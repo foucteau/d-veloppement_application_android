@@ -4,3 +4,5 @@ rootProject.name = 'AndroidApplicationLab'
 include ':applications:calculatrice-test'
 
 include ':applications:compteur-simple'
+
+include ':applications:compteur-v2'
