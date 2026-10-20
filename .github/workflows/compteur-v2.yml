@@ -1,0 +1,49 @@
+name: Compteur V2 - compilation et tests Android
+on:
+  push:
+    paths:
+      - 'applications/compteur-v2/**'
+      - 'settings.gradle'
+      - '.github/workflows/compteur-v2.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Compiler V2
+        run: gradle :applications:compteur-v2:assembleDebug
+      - name: Activer KVM
+        run: sudo chmod 666 /dev/kvm
+      - name: Tester V2 sur émulateur
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: gradle :applications:compteur-v2:connectedDebugAndroidTest
+      - name: Archiver APK V2 et rapports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compteur-v2-resultats
+          path: |
+            applications/compteur-v2/build/outputs/apk/debug/*.apk
+            applications/compteur-v2/build/reports/androidTests/**
+            applications/compteur-v2/build/outputs/androidTest-results/**
+          if-no-files-found: warn
