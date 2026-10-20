@@ -152,3 +152,43 @@ Ce protocole s'applique **à toute application Android** et à tout nouveau sous
 Work est le **pilote** du processus, non un substitut à l'analyse technique : orchestrateur général, managers de spécialité, agents exécutants et vérificateurs. GitHub est le monorepo et l'outil de CI ; Drive sert de boîte d'entrée et de conservation des originaux/rapports. Le fonctionnement parallèle, les agents réellement disponibles et les outils de décompilation doivent être vérifiés avant de prétendre qu'ils sont déployés.
 
 **Consigne de démarrage universelle** : « Lis le protocole générique, analyse intégralement le binaire Android déposé, fais vérifier toutes les briques et livre le dossier de rétro-analyse. Ne crée aucun sous-projet ni code tant que la porte de validation de l'analyse n'est pas franchie. »
+
+
+## Organisation Drive : boîte d'entrée et mémoire centrale par application
+
+Le dossier Google Drive `développement_application_android` est le point d'entrée. **La racine sert uniquement de boîte de dépôt** pour les nouveaux APK, XAPK ou APKS ; les fichiers déjà classés dans des sous-dossiers ne sont pas de nouvelles demandes.
+
+**Dès le démarrage de l'analyse**, avant toute décompilation :
+1. Lister la racine et identifier chaque archive Android non prise en charge. Si plusieurs archives correspondent à une seule application ou si l'identité est ambiguë, résoudre ce point avant de déplacer.
+2. Déterminer un nom de dossier stable et lisible à partir du nom/package de l'application ; rechercher un dossier existant pour éviter les doublons et conserver les analyses antérieures.
+3. Créer au besoin le sous-dossier `<application>/`, puis **déplacer** l'archive originale depuis la racine dans ce dossier, sans la renommer ni la modifier ; enregistrer SHA-256, taille, version, date et ID Drive.
+4. Faire de ce sous-dossier **l'unique mémoire centrale du dossier d'analyse de cette application**. Tout constat, extraction, inventaire, graphe, contrat d'agent, résultat de contre-vérification, anomalie, décision et état d'avancement doit y être consigné au fur et à mesure.
+5. À chaque reprise, **lire d'abord la mémoire centrale et le journal d'avancement**, vérifier les preuves existantes et reprendre au dernier point validé ; ne pas refaire aveuglément le travail déjà accepté.
+6. Ne créer un sous-projet de code dans le monorepo GitHub qu'après validation intégrale de l'analyse selon la porte bloquante définie plus haut. Les informations propres à une application restent dans son dossier Drive ; les règles communes restent dans ce README générique.
+
+### Arborescence cible par application
+
+```text
+développement_application_android/
+  README.md                        # protocole générique
+  <nouvel-original>.xapk           # boîte d'entrée, temporaire
+  <application>/
+    original/
+      <archive-originale>.xapk     # conserver les octets d'origine
+    README.md                      # point d'entrée de la mémoire centrale
+    etat.json                      # phase, tâches, blocages, dernière validation
+    journal.md                     # progression chronologique, reprise
+    inventaire/                    # hashes, manifestes, ABI, splits, ressources
+    decompilation/                 # sorties d'outils, provenance, versions
+    architecture/                  # modules, fonctions, appels, entrées/sorties
+    donnees/                       # schémas, tableaux, flux de données
+    interfaces/                    # widgets, actions, états, navigation
+    preuves/                       # adresses, symboles, références et confiance
+    agents/                        # contrats, rapports, refus, corrections
+    validations/                   # couverture, contradictions, porte bloquante
+    specifications/                # cahier des charges issu du code
+```
+
+Cette arborescence est **une cible documentaire** : ne pas déclarer créés les fichiers ou sous-dossiers qui n'existent pas encore. Le dossier `original/` est recommandé ; si l'archive a été déplacée directement à la racine du sous-dossier, elle reste valide et son emplacement doit être enregistré dans le README.
+
+**Politique de reprise** : chaque étape produit un état durable, horodaté, avec liens de preuves, responsable, version et prochaine action. Une interruption ne doit jamais faire perdre le dernier état validé. Les artefacts volumineux peuvent être conservés dans un stockage associé, mais doivent être indexés depuis la mémoire centrale Drive.
